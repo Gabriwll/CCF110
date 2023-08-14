@@ -1,2 +1,3 @@
 # CCF110
-Repositório criado para a elaboração do projeto final de CCF 110
+Nome: Caio Paceli Matrícula: 3993
+Nome: Gabriel Luiz Magalhães Amorim Matrícula: 5560
