@@ -1,26 +1,70 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define n 20    //número de espaços para investimentos
+#define n 10    //número de espaços para investimentos
+                //10 = baixo risco | 10 = alto risco
+
+/*
+Reformular o sistema de detecção se o espaço no vetor está ocupado ou não
+
+ao invés de utilizar uma variável flag, utilizar um contador que marca o último espaço ocupado.
+*/
 
 /*
 Encontrar uma forma de utilizar as funções e struct contidas nesse arquivo no main.
 */
 
+struct investimentos{
+    int id;
+    int tipo;   //baixoRisco = 1 && altoRisco = 2;    
+    char nome[30];
+    float rendimento;
+    float taxa;
+};
+
 int investimentoEditor(){   //Essa função será disponível apenas para usuários da categoria administrador.
     int edicao = 0, selectInvestimento;
-    struct investimentos investimento[n];
+    int contBaixo = 0, contAlto = 0;
+    struct investimentos baixoRisco[n], altoRisco[n];
 
     printf("Escolha a ferramenta de edição: \n");
     printf("(1) Adicionar novo investimento;\n");
     printf("(2) Remover investimento existente;\n");
     printf("(3) Editar investimento existente;\n");
+    printf("(4) Listar investimentos;\n");
     
     while(edicao != 1 || edicao != 2 || edicao != 3){
         scanf("%d", &edicao);
+
         switch (edicao){
-        case 1:
+        case 1: //adicionar investimento
             for(int i = 0; i < n; i++){
+                printf("Defina o tipo de investimento: \n");
+                printf("(1) Investimento de baixo risco.\n(2) Investimento de alto risco.\n"); //possível bug quando usuário digita algo diferente de 1 ou 2
+                scanf("%d", &selectInvestimento);                                             //fazer um get pra esse tipo de coisa
+                
+                if(selectInvestimento == 1){
+                    printf("Digite o nome do investimento:\n");           //otimizar através de uma função que 
+                    scanf("%c", &baixoRisco[i].nome);                     //insere os dados no vetor correto
+                    baixoRisco[i].id = i;
+
+                    printf("Defina a taxa e o rendimento (float):\n");
+                    scanf("%f%f", &baixoRisco[i].taxa, &baixoRisco[i].rendimento);
+                    contBaixo++;
+
+                }else if(selectInvestimento == 2){
+                    printf("Digite o nome do investimento:\n");           //otimizar através de uma função que
+                    scanf("%c", &altoRisco[i].nome);                      //insere os dados no vetor correto
+                    altoRisco[i].id = (10 + i);
+
+                    printf("Defina a taxa e o rendimento (float):\n");
+                    scanf("%f%f", &altoRisco[i].taxa, &altoRisco[i].rendimento);
+                    contAlto++;
+
+                }else{
+                    printf("Entrada invalida.\n");
+                }
+                /*
                 if(investimento[i].flag == 0){ //flag == 1 (espaço preenchido) //flag == 0 (espaço vago)
                     printf("Digite o nome do investimento:\n");
                     fgets(investimento[i].nome, sizeof(investimento[i].nome), stdin); //preenche o vetor de caracteres 'nome' contando com espaços
@@ -34,11 +78,15 @@ int investimentoEditor(){   //Essa função será disponível apenas para usuár
 
                     investimento[i].flag = 1;
                 }
+                */
             }
 
             break;
         
-        case 2:
+        case 2: //remover investimento
+            
+
+            /*
             for(int i = 0; i < n; i++){
                 printf("Id: %d /nNome: %c/n", i, investimento[i].nome);
             }
@@ -49,12 +97,17 @@ int investimentoEditor(){   //Essa função será disponível apenas para usuár
             /*
             O restante das informações não precisa ser alterada uma vez que a variável que será mostra se o
             investimento existe está setada em 0 (false).
-            */
+            *comentado
+
             investimento[selectInvestimento].flag = 0;
+            */
 
             break;
 
-        case 3:
+        case 3: //editar investimento
+            printf("Selecione o id:\n");            
+
+            /*
             printf("Selecione o investimento:\n");
             scanf("%d", &selectInvestimento);
 
@@ -66,6 +119,20 @@ int investimentoEditor(){   //Essa função será disponível apenas para usuár
 
             printf("Defina a taxa e o rendimento(float):\n");
             scanf("%f%f", &investimento[selectInvestimento].taxa, &investimento[selectInvestimento].rendimento);
+            */
+
+            break;
+
+        case 4: //listar investimentos.
+            for(int i = 0; i < n*2; i++){
+                
+                if(i < 10){
+                    printf("Id: 0%d | Nome: %c\n", baixoRisco[i].id, baixoRisco[i].nome);
+                }else{
+                    printf("Id: %d | Nome: %c\n", baixoRisco[i].id, baixoRisco[i].nome);
+                }
+
+            }
 
             break;
         
@@ -131,10 +198,3 @@ int investimentoAltoRisco(int tempo, int capital){
     em 10% do valor bruto do capital investido.
 */
 
-struct investimentos{
-    int flag; //id = posição no vetor
-    int tipo;   //baixoRisco = 1 && altoRisco = 2;    
-    char nome[30];
-    float rendimento;
-    float taxa;
-};
