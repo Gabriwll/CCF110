@@ -5,8 +5,8 @@ int main(){
     //cadastro do cleinte
     int opcao;
     int num_clientes = 0;
-    char nome_cliente[50];
-    int idade_cliente;
+    char nome_cliente[100][50];
+    int idade_cliente[100];
 
     while(1){
         printf("\n MENU DE CADASTRO DE CLIENTES\n");
@@ -15,22 +15,31 @@ int main(){
         printf("3. Mostrar Aplicaçoes por clientes\n");
         printf("4. Sair\n");
         printf(" Escolha uma opção\n");
-        scanf("%d",&opcao);
+        scanf("%d", &opcao);
 
 
     switch(opcao) {
         case 1:
+            if(num_clientes < 100 ){
             printf("Informe o nome do cliente: ");
-            scanf("%s",&nome_cliente);
+            scanf("%s", nome_cliente[num_clientes]);
             printf("\n");
             printf("Informe a idade do cliente: ");
-            scanf("%d",&idade_cliente);
+            scanf("%d",&idade_cliente[num_clientes]);
             num_clientes++;
+            printf("Clientes cadastrado com sucesso!\n");
+            }
+            else{
+                printf("Limite maximo de clientes atingido!\n");
+            }
             break;
+            
 
         case 2:
-            printf("Clientes cadastrados: \n");
-            printf("Nome: %s, Idade: %d\n" , nome_cliente, idade_cliente);
+            printf("CLIENTES CADASTRADOS: \n");
+            for(int i = 0; i < num_clientes; i++){
+            printf("Nome: %s, Idade: %d\n" , nome_cliente[i], idade_cliente[i]);
+            }
             printf("\nTotal de clientes: %d\n" , num_clientes);
             break;
 
