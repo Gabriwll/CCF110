@@ -17,6 +17,7 @@ int main(){
         printf(" Escolha uma opção\n");
         scanf("%d",&opcao);
 
+
     switch(opcao) {
         case 1:
             printf("Informe o nome do cliente: ");
