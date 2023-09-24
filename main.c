@@ -5,16 +5,19 @@ int main(){
     //cadastro do cleinte
     int opcao;
     int num_clientes = 0;
+    int cliente, tempo;
     char nome_cliente[100][50];
     int idade_cliente[100];
+    float capitalInical[100], rendimento[100];
 
     while(1){
         printf("\n MENU DE CADASTRO DE CLIENTES\n");
-        printf("1. Cadastrar clientes\n");
-        printf("2. Listar clientes\n");
-        printf("3. Mostrar Aplicaçoes por clientes\n");
-        printf("4. Sair\n");
-        printf(" Escolha uma opção\n");
+        printf("1. Cadastrar clientes;\n");
+        printf("2. Listar clientes;\n");
+        printf("3. Mostrar Aplicaçoes por clientes;\n");
+        printf("4. Realizar um investimento;\n");
+        printf("5. Sair.\n");
+        printf(" Escolha uma opcao\n");
         scanf("%d", &opcao);
 
 
@@ -49,40 +52,53 @@ int main(){
             break;
 
         case 4:
+            //investimentos
+
+                if(num_clientes > 0){
+                    
+                    printf(" MENU DE INVESTIMENTO!\n");
+                    printf("Selecione o cliente (id): \n");
+                    scanf("%d", &cliente);
+
+                    cliente--;
+
+                    printf("Bem-vindo %s\n", nome_cliente[cliente]);
+                    printf("\nInsira um capital inicial: \n");
+                    scanf("%f", &capitalInical[cliente]);
+
+                    printf("Defina o tempo de rendimento: \n");
+                    scanf("%d", &tempo);
+
+                    rendimento[cliente] = capitalInical[cliente];
+
+                    for(int i = 0; i < tempo; i++){
+                        rendimento[cliente] = (((capitalInical[cliente]) * 0.01) + rendimento[cliente]);
+                    }
+
+                    printf("Valor final: R$ %.2f", rendimento[cliente]);
+
+                }else{
+                    printf("Cadastre um cliente primeiro.\n");
+                }
+                
+
+            break;
+
+        case 5:
             printf("Saindo do programa.\n");
             return 0;
+
+            break;
         
         default:
             printf("Invalido digite outra opçao.\n");
+
+            break;
         
 
     }
     
     }
 
-    int cliente;
-    int tempo;
-    float capitalInical[100];
-
-    printf(" MENU DE INVESTIMENTO!\n");
-    printf("Selecione o cliente (id): \n");
-    scanf("%d", &cliente);
-
-    cliente--;
-
-    printf("Bem-vindo %s\n", nome_cliente[cliente]);
-    printf("\nInsira um capital inicial: \n");
-    scanf("%f", &capitalInical[cliente]);
-
-    printf("Defina o tempo de rendimento: \n");
-    scanf("%d", &tempo);
-
-    float rendimento[tempo];
-
-    for(int i = 0; i < tempo; i++){
-        rendimento[i] = (((capitalInical[cliente]) * 0.01) + capitalInical[cliente]);
-        capitalInical[cliente] = rendimento[i];
-    }
- 
     return 0;
 }
