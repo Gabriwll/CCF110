@@ -23,6 +23,8 @@ int main(){
 
     switch(opcao) {
         case 1:
+            //cadastrar clientes
+
             if(num_clientes <= 100){
             printf("Informe o nome do cliente: ");
             scanf("%s", nome_cliente[num_clientes]);
@@ -39,6 +41,8 @@ int main(){
             
 
         case 2:
+            //listar clientes
+
             printf("CLIENTES CADASTRADOS: \n");
             for(int i = 0; i < num_clientes; i++){
             printf("Id: %d Nome: %s, Idade: %d\n" , (i + 1), nome_cliente[i], idade_cliente[i]);
@@ -48,11 +52,16 @@ int main(){
             break;
 
         case 3:
-            printf("em construção.\n");
+            //mostrar aplicações por clientes
+
+            for(int i = 0; i <= num_clientes; i++){
+                printf("%d | %s: %.2f\n", (i + 1), nome_cliente[i], rendimento[i]);
+            }
+            
             break;
 
         case 4:
-            //investimentos
+            //realizar um investimento
 
                 if(num_clientes > 0){
                     
@@ -85,12 +94,16 @@ int main(){
             break;
 
         case 5:
+            //sair
+
             printf("Saindo do programa.\n");
             return 0;
 
             break;
         
         default:
+            //exceções
+
             printf("Invalido digite outra opçao.\n");
 
             break;
