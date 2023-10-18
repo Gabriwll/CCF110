@@ -1,14 +1,16 @@
 #include <stdio.h>
 #include <string.h>
 
+#define MAX_CLIENTES 100
+
 int main(){
     //cadastro do cleinte
     int opcao;
-    int num_clientes = 0;
+    int numClientes = 0;
     int cliente, tempo;
-    char nome_cliente[100][50];
-    int idade_cliente[100];
-    float capitalInical[100], rendimento[100];
+    char nomeCliente[MAX_CLIENTES][50];
+    int idadeCliente[MAX_CLIENTES];
+    float capitalInical[MAX_CLIENTES], rendimento[MAX_CLIENTES];
 
     while(1){
         printf("\n MENU DE CADASTRO DE CLIENTES\n");
@@ -25,13 +27,13 @@ int main(){
         case 1:
             //cadastrar clientes
 
-            if(num_clientes <= 100){
+            if(numClientes <= MAX_CLIENTES){
             printf("Informe o nome do cliente: ");
-            scanf("%s", nome_cliente[num_clientes]);
+            scanf("%s", nomeCliente[numClientes]);
             printf("\n");
             printf("Informe a idade do cliente: ");
-            scanf("%d",&idade_cliente[num_clientes]);
-            num_clientes++;
+            scanf("%d",&idadeCliente[numClientes]);
+            numClientes++;
             printf("Clientes cadastrado com sucesso!\n");
             }
             else{
@@ -44,18 +46,18 @@ int main(){
             //listar clientes
 
             printf("CLIENTES CADASTRADOS: \n");
-            for(int i = 0; i < num_clientes; i++){
-            printf("Id: %d Nome: %s, Idade: %d\n" , (i + 1), nome_cliente[i], idade_cliente[i]);
+            for(int i = 0; i < numClientes; i++){
+            printf("Id: %d Nome: %s, Idade: %d\n" , (i + 1), nomeCliente[i], idadeCliente[i]);
             }
 
-            printf("\nTotal de clientes: %d\n" , num_clientes);
+            printf("\nTotal de clientes: %d\n" , numClientes);
             break;
 
         case 3:
             //mostrar aplicações por clientes
 
-            for(int i = 0; i <= num_clientes; i++){
-                printf("%d | %s: %.2f\n", (i + 1), nome_cliente[i], rendimento[i]);
+            for(int i = 0; i <= numClientes; i++){
+                printf("%d | %s: %.2f\n", (i + 1), nomeCliente[i], rendimento[i]);
             }
             
             break;
@@ -63,7 +65,7 @@ int main(){
         case 4:
             //realizar um investimento
 
-                if(num_clientes > 0){
+                if(numClientes > 0){
                     
                     printf(" MENU DE INVESTIMENTO!\n");
                     printf("Selecione o cliente (id): \n");
@@ -71,7 +73,7 @@ int main(){
 
                     cliente--;
 
-                    printf("Bem-vindo %s\n", nome_cliente[cliente]);
+                    printf("Bem-vindo %s\n", nomeCliente[cliente]);
                     printf("\nInsira um capital inicial: \n");
                     scanf("%f", &capitalInical[cliente]);
 
