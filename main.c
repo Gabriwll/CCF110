@@ -26,6 +26,8 @@ struct usuario{
     char senha[8]; //o ideal seria ter essa senha criptografada
     char cpf[11];
     int idade; //o ideal seria utilizar a data de nascimento para atualizar a idade de forma dinâmica
+
+    float capital;
 };
 
 int main(){
@@ -33,7 +35,9 @@ int main(){
 
     struct usuario usuarios[MAX_USUARIO];
     char nomeAux[30], senhaAux[8];
-    char cadastroCliente;
+    char opcaoUsuario;
+    int posicaoLoginUsuario;
+    float capital;
 
     int flag;
 
@@ -48,19 +52,23 @@ int main(){
     }
 
     for(int i = 0; i < MAX_USUARIO; i++){
-        if(fscanf(arquivoClientes, "%s;%s;%d;%s;\n", &usuarios[i].nome, &usuarios[i].cpf, &usuarios[i].idade, &usuarios[i].senha) == EOF){
+        if(fscanf(arquivoClientes, "%s %s %d %s\n", &usuarios[i].nome, &usuarios[i].cpf, 
+                                                    &usuarios[i].idade, &usuarios[i].senha) == EOF){
+        
             break;
         }
         printf("Usuario %d:\n%s\n%s\n%d\n%s\n", (i + 1), usuarios[i].nome, usuarios[i].cpf, usuarios[i].idade, usuarios[i].senha);
+        //linha de teste para verificar o preenchimento da struct
+        //O cpf da primeira posição da struct não está sendo preenchida.
     }
 
     fclose(arquivoClientes);
 
     if(TIPO_EXECUCAO == 1){
         printf("Deseja fazer o login ou se cadastrar? ('L' = Login e 'C' = Cadastrar)\n");
-        scanf(" %c", &cadastroCliente);
+        scanf(" %c", &opcaoUsuario);
 
-        switch(cadastroCliente){    //substituir futuramente por um sistema único que busca nos arquivos um usuário e caso não encontre pergunte se deseja cadastrar um novo cliente
+        switch(opcaoUsuario){    //substituir futuramente por um sistema único que busca nos arquivos um usuário e caso não encontre pergunte se deseja cadastrar um novo cliente
             case 'L':
                 flag = 1;
 
@@ -80,6 +88,7 @@ int main(){
                                 break;
                             }
 
+                            posicaoLoginUsuario = i;
                             flag = 0;
 
                             break;
@@ -132,7 +141,11 @@ int main(){
                             scanf("%s", &usuarios[i].senha);
                             fprintf(arquivoClientes, "%s;\n", usuarios[i].senha);
 
+                            usuarios[i].capital = 0.0;
+                            
+                            posicaoLoginUsuario = i;
                             flag = 0;
+
                             break;
                         }
                     }
@@ -149,6 +162,88 @@ int main(){
 
                 return 1;
         }
+
+        //parte de manipulação dos investimentos em si
+        printf("Bem vindo(a), %s\n", usuarios[posicaoLoginUsuario].nome);
+        printf("Selecione uma das opcoes abaixo:\n");
+
+        flag = 1;
+
+        while(flag != 0){
+            puts("1 - Adicionar saldo;");
+            puts("2 - Retirar saldo;");
+            puts("3 - Fazer um investimento;");
+            puts("4 - Sair;");
+
+            scanf(" %c", &opcaoUsuario);
+
+            switch (opcaoUsuario){
+                case '1':
+                    puts("Insira o valor a ser adicionado:");
+                    capital = -1.0;
+
+                    while(capital < 0.0){
+                        scanf("%f", &capital);
+
+                        if(capital < 0.0){
+                            puts("Entrada invalida. Tente novamente.");
+
+                            continue;
+                        }else{
+                            usuarios[posicaoLoginUsuario].capital += capital;
+
+                            //salvar no arquivo
+
+                            printf("\n%.2f adicionados com sucesso.\nSaldo atual: %.2f", capital, usuarios[posicaoLoginUsuario].capital);
+                        }
+                    }
+
+                    flag = 0;
+                    break;
+                
+                case '2':
+                    puts("Insira o valor a ser retirado:");
+                    capital = -1.0;
+
+                    while(capital < 0.0){
+                        scanf("%f", &capital);
+
+                        if(capital < 0.0){
+                            puts("Entrada invalida. Tente novamente.");
+
+                            continue;
+                        }else{
+                            usuarios[posicaoLoginUsuario].capital -= capital;
+
+                            //salvar no arquivo
+
+                            printf("\n%.2f retirados com sucesso.\nSaldo atual: %.2f", capital, usuarios[posicaoLoginUsuario].capital);
+                        }
+
+                    }
+
+                    flag = 0;
+                    break;
+                
+                case '3':
+                    /* code */
+
+                    flag = 0;
+                    break;
+                
+                case '4':
+                    puts("Saindo do sistema.");
+                    
+                    return 0;
+
+                default:
+                    puts("Opcao indisponivel. Tente novamente.");
+                    flag = 1;
+
+                    break;
+            }
+        }
+        
     }
 
     return 0;

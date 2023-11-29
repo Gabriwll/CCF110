@@ -1,2 +1,2 @@
-Gabriel;11111111111;19;Macarrao;
-Edgar;26898748698;25;Nhoque;
+Gabriel 12345678900 19 Macarrao
+Edgar 26898748698 25 Nhoque
