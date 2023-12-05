@@ -4,7 +4,7 @@
 /*Tipo de execução define se o sistema executará em um dos modos a seguir:
 * Usuário comum == 1:
 * - Acesso a cadastro, login e investimentos.
-* 
+*
 * Usuário administrador == 0:
 * - Acesso a edição de investimentos disponíveis.
 */
@@ -16,24 +16,204 @@ precisar abrir o código fonte
 */
 
 /*Quantidade máxima de usuários a serem registrados no sistema.
-* 
+*
 * Essa constante deverá ser substituida futuramente por um sistema de alocação dinâmica
 */
 #define MAX_USUARIO 50
 
-struct usuario{
+
+//clientes.c
+
+typedef struct{
     char nome[30];
     char senha[8]; //o ideal seria ter essa senha criptografada
     char cpf[11];
     int idade; //o ideal seria utilizar a data de nascimento para atualizar a idade de forma dinâmica
 
     float capital;
-};
+}usuario;
+
+int loginUsuario(int maxUsuario){
+    usuario usuarios[maxUsuario];
+
+    int posicaoLoginUsuario = -1;
+    char nomeAux[30];
+    char senhaAux[8];
+
+    while (posicaoLoginUsuario == -1){
+        puts("Digite o seu nome:");
+        scanf(" %s", &nomeAux);
+
+        for(int i = 0; i < maxUsuario; i++){
+            if(nomeAux == usuarios[i].nome){
+                puts("Digite a sua senha:");
+                scanf(" %s", &senhaAux);
+
+                if(senhaAux != usuarios[i].senha){
+                    puts("Senha incorreta. Tente novamente.");
+                    posicaoLoginUsuario = -1;
+
+                    break;
+                }
+
+                posicaoLoginUsuario = i;
+
+                break;
+            }else if(usuarios[i].nome[0] == '\0'){
+                printf("Usuario nao encontrado no sistema.\n Tente novamente.\n");
+                posicaoLoginUsuario = -1;
+
+                break;
+            }
+        }
+    }
+
+    return posicaoLoginUsuario;
+}
+
+int regristrarUsuario(int maxUsuario){
+    FILE *arquivoClientes = NULL;
+    FILE *arquivoSaldo = NULL;
+
+    usuario usuarios[maxUsuario];
+    
+    char nomeAux[30];
+    int posicaoLoginUsuario;
+
+    int flag = 1;
+    
+    if((arquivoClientes = fopen("../Dados clientes/clientes.txt", "a")) == NULL){
+        printf("Erro ao acessar a base de dados de cadastro (A).\n");
+
+        return -1;
+    }
+
+    if((arquivoSaldo = fopen("../Dados clientes/saldo.txt", "a")) == NULL){
+        printf("Erro ao acessar a base de dados de saldo de clientes.\n");
+
+        return -1;
+    }
+
+    flag = 1;
+
+    while(flag != 0){
+        puts("Cadastro:\n");
+        printf("Digite o seu nome:\n");
+
+        scanf("%s", &nomeAux);
+
+        for(int i = 0; i < maxUsuario; i++){
+            if(usuarios[i].nome == nomeAux){
+                printf("Usuario ja cadastrado, tente novamente.");
+
+                break;
+            }else if(usuarios[i].nome[0] == '\0'){
+                strcpy(usuarios[i].nome, nomeAux);
+                fprintf(arquivoClientes, "%s ", usuarios[i].nome);
+
+                puts("Digite o seu cpf:");  //Verificar a validez do cpf
+                scanf("%s", &usuarios[i].cpf);
+                fprintf(arquivoClientes, "%s ", usuarios[i].cpf);
+
+                puts("Digite a sua idade:");
+                scanf("%d", &usuarios[i].idade);
+                fprintf(arquivoClientes, "%d ", usuarios[i].idade);
+
+                puts("Digite a sua senha:"); //Verificar a validez da senha
+                scanf("%s", &usuarios[i].senha);
+                fprintf(arquivoClientes, "%s\n", usuarios[i].senha);
+
+                usuarios[i].capital = 0.0;
+                fprintf(arquivoSaldo, "%.2f\n", &usuarios[i].capital);
+
+                posicaoLoginUsuario = i;
+                flag = 0;
+
+                break;
+            }
+        }
+    }
+
+    fclose(arquivoClientes);
+    fclose(arquivoSaldo);
+
+    return posicaoLoginUsuario;
+}
+
+void depositarQuantia(int maxUsuario, int posicaoLoginUsuario, float deposito){
+    FILE *arquivoSaldo = NULL;
+
+    usuario usuarios[maxUsuario];
+
+    if((arquivoSaldo = fopen("../Dados clientes/saldo.txt", "w")) == NULL){
+        printf("Erro ao acessar a base de dados do saldo.\n");
+    }
+
+    usuarios[posicaoLoginUsuario].capital += deposito;
+
+    for(int i = 0; i < maxUsuario; i++){
+        if(usuarios[i].nome == '\0'){
+            break;
+        }
+
+        fprintf(arquivoSaldo, "%.2f", usuarios[i].capital);
+    }
+
+    fclose(arquivoSaldo);
+}
+/*Atenção ao utilizar essa função,
+* a struct com os dados dos clientes já deve estar preenchida.
+* Caso isso não aconteça o capital de todos os clientes será perdido.
+*/
+
+void sacarQuantia(int maxUsuario, int posicaoLoginUsuario, float saque){
+    FILE *arquivoSaldo = NULL;
+
+    usuario usuarios[maxUsuario];
+
+    if((usuarios[posicaoLoginUsuario].capital - saque) >= 0){
+        usuarios[posicaoLoginUsuario].capital -= saque;
+    }else{
+        printf("Saldo insuficiente.\n");
+
+        /*A função deve-se encerrar aqui, a fim de não atualizar o arquivo, mantendo um custo mínimo de
+        * processamento.
+        */
+    }
+    
+    if((arquivoSaldo = fopen("../Dados clientes/saldo.txt", "w")) == NULL){
+        printf("Erro ao acessar a base de dados do saldo.\n");
+    }
+
+    for(int i = 0; i < maxUsuario; i++){
+        if(usuarios[i].nome == '\0'){
+            break;
+        }
+
+        fprintf(arquivoSaldo, "%.2f", usuarios[i].capital);
+    }
+}
+/*Atenção ao utilizar essa função,
+* a struct com os dados dos clientes já deve estar preenchida.
+* Caso isso não aconteça o capital de todos os clientes será perdido.
+*/
+
+float investir(){
+
+}
+
+
+/*
+Usuario *lista_usuarios;
+
+lista_usuarios = (Usuario*) calloc(10, sizeof(Usuario));
+lista_usuarios = (Usuario*) realoc(lista_usuarios, (10 + 5) * sizeof(Usuario));
+*/
 
 int main(){
     FILE *arquivoClientes = NULL;
 
-    struct usuario usuarios[MAX_USUARIO];
+    usuario usuarios[MAX_USUARIO];
     char nomeAux[30], senhaAux[8];
     char opcaoUsuario;
     int posicaoLoginUsuario;
@@ -45,19 +225,20 @@ int main(){
         usuarios[i].nome[0] = '\0';
     }
 
-    if((arquivoClientes = fopen("../Dados cadastrais/clientes.txt", "r")) == NULL){
+    if((arquivoClientes = fopen("../Dados clientes/clientes.txt", "r")) == NULL){
         printf("Erro ao acessar a base de dados de cadastro (R).\n");
 
         return 1;
     }
 
     for(int i = 0; i < MAX_USUARIO; i++){
-        if(fscanf(arquivoClientes, "%s %s %d %s\n", &usuarios[i].nome, &usuarios[i].cpf, 
+        if(fscanf(arquivoClientes, "%s %s %d %s\n", &usuarios[i].nome, &usuarios[i].cpf,
                                                     &usuarios[i].idade, &usuarios[i].senha) == EOF){
-        
+
             break;
         }
-        printf("Usuario %d:\n%s\n%s\n%d\n%s\n", (i + 1), usuarios[i].nome, usuarios[i].cpf, usuarios[i].idade, usuarios[i].senha);
+        printf("Usuario %d:\n%s\n%s\n%d\n%s\n", (i + 1), usuarios[i].nome, usuarios[i].cpf, 
+                                                         usuarios[i].idade, usuarios[i].senha);
         //linha de teste para verificar o preenchimento da struct
         //O cpf da primeira posição da struct não está sendo preenchida.
     }
@@ -70,90 +251,21 @@ int main(){
 
         switch(opcaoUsuario){    //substituir futuramente por um sistema único que busca nos arquivos um usuário e caso não encontre pergunte se deseja cadastrar um novo cliente
             case 'L':
-                flag = 1;
-
-                while (flag != 0){
-                    puts("Digite o seu nome:");
-                    scanf(" %s", &nomeAux);
-
-                    for(int i = 0; i < MAX_USUARIO; i++){
-                        if(nomeAux == usuarios[i].nome){
-                            puts("Digite a sua senha:");
-                            scanf(" %s", &senhaAux);
-
-                            if(senhaAux != usuarios[i].senha){
-                                puts("Senha incorreta. Tente novamente.");
-                                flag = 1;
-
-                                break;
-                            }
-
-                            posicaoLoginUsuario = i;
-                            flag = 0;
-
-                            break;
-                        }else if(usuarios[i].nome[0] == '\0'){
-                            printf("Usuario nao encontrado no sistema.\n Tente novamente.\n");
-                            flag = 1;
-                            
-                            break;
-                        }
-                    }
-                }
-
-                break;
-
-            case 'C':
-                if((arquivoClientes = fopen("../Dados cadastrais/clientes.txt", "a")) == NULL){
-                    printf("Erro ao acessar a base de dados de cadastro (A).\n");
+                
+                if((posicaoLoginUsuario = loginUsuario(MAX_USUARIO)) == -1){
+                    printf("Erro no login.\n");
 
                     return 1;
                 }
                 
-                //Para que o bloco a seguir funcione, os dados do arquivo devem preencher a struct a partir da linha 27
+                break;
 
-                flag = 1;
+            case 'C':
+                if((posicaoLoginUsuario = regristrarUsuario(MAX_USUARIO)) == -1){
+                    printf("Erro ao cadastrar o usuario.\n");
 
-                while(flag != 0){
-                    puts("Cadastro:\n");
-                    printf("Digite o seu nome:\n");
-                
-                    scanf("%s", &nomeAux);
-
-                    for(int i = 0; i < MAX_USUARIO; i++){
-                        if(usuarios[i].nome == nomeAux){
-                            printf("Usuario ja cadastrado, tente novamente.");
-
-                            break;
-                        } else if(usuarios[i].nome[0] == '\0'){
-                            strcpy(usuarios[i].nome, nomeAux);
-                            fprintf(arquivoClientes, "%s;", usuarios[i].nome);
-
-                            puts("Digite o seu cpf:");  //Verificar a validez do cpf
-                            scanf("%s", &usuarios[i].cpf);
-                            fprintf(arquivoClientes, "%s;", usuarios[i].cpf);
-
-                            puts("Digite a sua idade:");
-                            scanf("%d", &usuarios[i].idade);
-                            fprintf(arquivoClientes, "%d;", usuarios[i].idade);
-                            
-                            puts("Digite a sua senha:"); //Verificar a validez da senha
-                            scanf("%s", &usuarios[i].senha);
-                            fprintf(arquivoClientes, "%s;\n", usuarios[i].senha);
-
-                            usuarios[i].capital = 0.0;
-                            
-                            posicaoLoginUsuario = i;
-                            flag = 0;
-
-                            break;
-                        }
-                    }
+                    return 1;
                 }
-                
-
-                
-                fclose(arquivoClientes);
 
                 break;
 
@@ -190,17 +302,16 @@ int main(){
 
                             continue;
                         }else{
-                            usuarios[posicaoLoginUsuario].capital += capital;
+                            depositarQuantia(MAX_USUARIO, posicaoLoginUsuario, capital);
 
-                            //salvar no arquivo
-
-                            printf("\n%.2f adicionados com sucesso.\nSaldo atual: %.2f", capital, usuarios[posicaoLoginUsuario].capital);
+                            printf("\nR$ %.2f adicionados com sucesso.\nSaldo atual: R$ %.2f", 
+                                    capital, usuarios[posicaoLoginUsuario].capital);
                         }
                     }
 
                     flag = 0;
                     break;
-                
+
                 case '2':
                     puts("Insira o valor a ser retirado:");
                     capital = -1.0;
@@ -213,27 +324,25 @@ int main(){
 
                             continue;
                         }else{
-                            usuarios[posicaoLoginUsuario].capital -= capital;
+                            sacarQuantia(MAX_USUARIO, posicaoLoginUsuario, capital);
 
-                            //salvar no arquivo
-
-                            printf("\n%.2f retirados com sucesso.\nSaldo atual: %.2f", capital, usuarios[posicaoLoginUsuario].capital);
+                            printf("\nR$ %.2f retirados com sucesso.\nSaldo atual: R$ %.2f", capital, usuarios[posicaoLoginUsuario].capital);
                         }
 
                     }
 
                     flag = 0;
                     break;
-                
-                case '3':
+
+                case '3'://fazer um investimento
                     /* code */
 
                     flag = 0;
                     break;
-                
+
                 case '4':
                     puts("Saindo do sistema.");
-                    
+
                     return 0;
 
                 default:
@@ -243,7 +352,7 @@ int main(){
                     break;
             }
         }
-        
+
     }
 
     return 0;
