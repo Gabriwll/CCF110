@@ -233,10 +233,6 @@ int main(){
         }
         fscanf(arquivoSaldo, "%f\n", &usuarios[i].capital);
 
-        printf("Usuario %d:\n%s\n%s\n%d\n%s\n", (i + 1), usuarios[i].nome, usuarios[i].cpf, 
-                                                         usuarios[i].idade, usuarios[i].senha);
-        //linha de teste para verificar o preenchimento da struct
-        //O cpf da primeira posição da struct não está sendo preenchida.
     }
 
     fclose(arquivoClientes);
