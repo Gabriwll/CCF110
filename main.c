@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 
-// #include "clientes.h"
-// #include "financeiro.h"
+// #include "./clientes.h"
+// #include "./financeiro.h"
 
 /*Tipo de execução define se o sistema executará em um dos modos a seguir:
 * Usuário comum == 1:
@@ -19,9 +19,6 @@
 */
 #define MAX_USUARIO 50
 
-
-//clientes.c
-
 typedef struct usuario{
     char nome[30];
     char senha[8]; //o ideal seria ter essa senha criptografada
@@ -30,6 +27,13 @@ typedef struct usuario{
 
     float capital;
 } usuario;
+
+typedef struct investimento{
+    int risco;        //medida comparativa, 0 é um investimento livre de perca
+    float rendimento; //será dado em %
+    int tempoMin;
+    int tempoMax;
+} investimento;
 
 int loginUsuario(int maxUsuario, usuario *usuarios){
 
@@ -190,6 +194,27 @@ void sacarQuantia(int maxUsuario, int posicaoLoginUsuario, usuario *usuarios, fl
 * Caso isso não aconteça o capital de todos os clientes será perdido.
 */
 
+float investir(int risco, int tempo, float rendimento, float capital){
+    float saldo = 0;
+
+    if(risco == 0){
+        saldo = (capital * pow(rendimento / 100, (tempo-1))); //dessa forma, teremos o valor final, apenas
+
+    }else{
+        for(int i = 0; i < tempo; i++){
+            if((rand() % 1) == 0){
+                saldo += (capital * ((rand() % risco) / 100));
+
+            }else{
+                saldo -= (capital * ((rand() % risco / 100)));
+                
+            }
+        }
+    }
+
+    return saldo;
+}
+
 /*
 Usuario *lista_usuarios;
 
@@ -232,7 +257,6 @@ int main(){
             break;
         }
         fscanf(arquivoSaldo, "%f\n", &usuarios[i].capital);
-
     }
 
     fclose(arquivoClientes);
@@ -277,7 +301,8 @@ int main(){
             puts("1 - Adicionar saldo;");
             puts("2 - Retirar saldo;");
             puts("3 - Fazer um investimento;");
-            puts("4 - Sair;");
+            puts("4 - Consultar saldo;");
+            puts("5 - Sair;");
 
             scanf(" %c", &opcaoUsuario);
 
@@ -327,12 +352,18 @@ int main(){
                     break;
 
                 case '3'://fazer um investimento
-                    /* code */
+                    
 
                     flag = 0;
                     break;
 
                 case '4':
+                    printf("Você possui R$ %.2f em conta.\n", usuarios[posicaoLoginUsuario].capital);
+
+                    flag = 0;
+                    break;
+
+                case '5':
                     puts("Saindo do sistema.");
 
                     return 0;
@@ -344,6 +375,8 @@ int main(){
                     break;
             }
         }
+
+    }else if(TIPO_EXECUCAO == 0){
 
     }
 
